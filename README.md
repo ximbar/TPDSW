@@ -7,8 +7,8 @@
 * 53072 - Deatriz, Esteban
 
 ### Repositorios
-* [frontend app]([http://hyperlinkToGihubOrGitlab](https://github.com/ximbar/TPDSW/tree/b52805f7387a7b9fd65b2eef4d9469e5a6552e04/frontend%20app))
-* [backend app]([http://hyperlinkToGihubOrGitlab](https://github.com/ximbar/TPDSW/tree/6e32c84bb3faeb80baa9780331f872f2c6d78fcc/backend%20app))
+* [frontend app](./backend app/)
+* [backend app](./frontend app/)
 
 ## Tema
 ### Descripción
