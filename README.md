@@ -2,7 +2,9 @@
 
 ## Grupo
 ### Integrantes
-* legajo - Apellido(s), Nombre(s)
+* 52571 - Ferzola, Ornella
+* 52320 - Gomez, Celeste
+* 53072 - Deatriz, Esteban
 
 ### Repositorios
 * [frontend app](http://hyperlinkToGihubOrGitlab)
