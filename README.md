@@ -8,7 +8,7 @@
 
 ### Repositorios
 * [frontend app](http://hyperlinkToGihubOrGitlab)
-* [backend app](http://hyperlinkToGihubOrGitlab)
+* [backend app]([http://hyperlinkToGihubOrGitlab](https://github.com/ximbar/TPDSW/tree/6e32c84bb3faeb80baa9780331f872f2c6d78fcc/backend%20app))
 *Nota*: si utiliza un monorepo indicar un solo link con fullstack app.
 
 ## Tema
