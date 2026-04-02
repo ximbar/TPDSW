@@ -7,8 +7,8 @@
 * 53072 - Deatriz, Esteban
 
 ### Repositorios
-* [frontend app](./backend app/)
-* [backend app](./frontend app/)
+* [frontend app](./backendapp/)
+* [backend app](./frontendapp/)
 
 ## Tema
 ### Descripción
