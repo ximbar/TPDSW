@@ -18,6 +18,47 @@ Este proyecto nace con el objetivo de evitar las largas filas y la saturación d
 ### Modelo
 ![imagen del modelo]()
 
+erDiagram
+    USUARIO {
+        int id PK
+        int legajo
+        string nombre
+        string email
+        string password
+        string rol
+    }
+    CATEGORIA {
+        int id PK
+        string nombre
+        string descripcion
+    }
+    PRODUCTO {
+        int id PK
+        string nombre
+        float precio
+        boolean disponible
+        int categoria_id FK
+    }
+    PEDIDO {
+        int id PK
+        datetime fecha
+        string estado
+        float total
+        int usuario_id FK
+    }
+    DETALLE_PEDIDO {
+        int id PK
+        int cantidad
+        float subtotal
+        int pedido_id FK
+        int producto_id FK
+    }
+
+    CATEGORIA ||--o{ PRODUCTO : "contiene"
+    USUARIO ||--o{ PEDIDO : "realiza"
+    PEDIDO ||--o{ DETALLE_PEDIDO : "incluye"
+    PRODUCTO ||--o{ DETALLE_PEDIDO : "pertenece a"
+
 *Nota*: incluir un link con la imagen de un modelo, puede ser modelo de dominio, diagrama de clases, DER. Si lo prefieren pueden utilizar diagramas con [Mermaid](https://mermaid.js.org) en lugar de imágenes.
 
 ## Alcance Funcional 
