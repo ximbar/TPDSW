@@ -13,7 +13,8 @@
 
 ## Tema
 ### Descripción
-*2 a 6 líneas describiendo el negocio (menos es más)*
+UTN-Eat es una aplicación web desarrollada para digitalizar y optimizar la experiencia en el bar de la Facultad. 
+Este proyecto nace con el objetivo de evitar las largas filas y la saturación de pedidos durante los recreos, ofreciendo una comunicacion directa entre los estudiantes y el personal del bar.
 
 ### Modelo
 ![imagen del modelo]()
