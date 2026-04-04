@@ -2,8 +2,8 @@
 
 ## Grupo
 ### Integrantes
-* 52571 - Ferzola, Ornella (Com 301)
 * 52320 - Gomez, Celeste (Com 304)
+* 52571 - Ferzola, Ornella (Com 301)
 * 53072 - Deatriz, Esteban (Com 304)
 
 ### Repositorios
