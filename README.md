@@ -16,11 +16,10 @@ UTN-Eat es una aplicación web desarrollada para digitalizar y optimizar la expe
 Este proyecto nace con el objetivo de evitar las largas filas y la saturación de pedidos durante los recreos, ofreciendo una comunicacion directa entre los estudiantes y el personal del bar.
 
 ### Modelo
-![imagen del modelo]()
+<img width="1896" height="1020" alt="image" src="https://github.com/user-attachments/assets/9da4da6a-0f64-4cb7-bff9-55f96d445e0b" />
 
 
-
-*Nota*: incluir un link con la imagen de un modelo, puede ser modelo de dominio, diagrama de clases, DER. Si lo prefieren pueden utilizar diagramas con [Mermaid](https://mermaid.js.org) en lugar de imágenes.
+*Link con la imagen*: https://drive.google.com/file/d/1OBiu_aYYQtGYvflXqaoManRGZXkH2aMC/view?usp=drive_link
 
 ## Alcance Funcional 
 
