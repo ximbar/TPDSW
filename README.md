@@ -30,7 +30,7 @@ Regularidad:
 |:-|:-|
 |CRUD simple|1. CRUD Usuario<br>2. CRUD Categoria|
 |CRUD dependiente|1. CRUD Producto {depende de} CRUD Categoria<br> |
-|Listado<br>+<br>detalle| 1. Listado de habitaciones filtrado por tipo de habitación, muestra nro y tipo de habitación => detalle CRUD Habitacion<br> 2. Listado de reservas filtrado por rango de fecha, muestra nro de habitación, fecha inicio y fin estadía, estado y nombre del cliente => detalle muestra datos completos de la reserva y del cliente|
+|Listado<br>+<br>detalle| 1. Listado de productos filtrado por categoría, muestra nombre y precio => detalle muestra descripción completa y permite ir al CRUD de Producto.<br> 2. Listado de pedidos filtrado por estado (Pendiente, En Preparación), muestra nro, alumno y total => detalle muestra los datos completos del pedido y los productos seleccionados (Detalle)|
 |CUU/Epic|1. Realizar un pedido (carrito de compras tipo Take Away)..<br>2. Cambiar el estado de un pedido (Ej: de "Pendiente" a "Listo para retirar" por parte del bar).|
 
 
