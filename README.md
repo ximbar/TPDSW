@@ -2,7 +2,7 @@
 
 ## Grupo
 ### Integrantes
-* 52320 - Gomez, Celeste (Com 304)
+* 52620 - Gomez, Celeste (Com 304)
 * 52571 - Ferzola, Ornella (Com 301)
 * 53072 - Deatriz, Esteban (Com 304)
 
@@ -43,7 +43,6 @@ Adicionales para Aprobación
 
 ### Alcance Adicional Voluntario
 
-*Nota*: El Alcance Adicional Voluntario es opcional, pero ayuda a que la funcionalidad del sistema esté completa y será considerado en la nota en función de su complejidad y esfuerzo.
 
 |Req|Detalle|
 |:-|:-|
