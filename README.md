@@ -16,8 +16,8 @@ UTN-Eat es una aplicación web desarrollada para digitalizar y optimizar la expe
 Este proyecto nace con el objetivo de evitar las largas filas y la saturación de pedidos durante los recreos, ofreciendo una comunicacion directa entre los estudiantes y el personal del bar.
 
 ### Modelo
-<img width="1896" height="1020" alt="image" src="https://github.com/user-attachments/assets/9da4da6a-0f64-4cb7-bff9-55f96d445e0b" />
 
+<img width="1912" height="933" alt="image" src="https://github.com/user-attachments/assets/194bff58-87d3-4b1c-a12a-d3d2782e073c" />
 
 *Link con la imagen*: https://drive.google.com/file/d/1OBiu_aYYQtGYvflXqaoManRGZXkH2aMC/view?usp=drive_link
 
@@ -28,8 +28,8 @@ Este proyecto nace con el objetivo de evitar las largas filas y la saturación d
 Regularidad:
 |Req|Detalle|
 |:-|:-|
-|CRUD simple|1. CRUD Usuario<br>2. CRUD Categoria|
-|CRUD dependiente|1. CRUD Producto {depende de} CRUD Categoria<br> |
+|CRUD simple|1. CRUD Usuario<br>2. CRUD Categoria <br>3. CRUD Medio de Pago|
+|CRUD dependiente|1. CRUD Producto {depende de} CRUD Categoria<br>2. CRUD Carta {depende de} CRUD Producto |
 |Listado<br>+<br>detalle| 1. Listado de productos filtrado por categoría, muestra nombre y precio => detalle muestra descripción completa y permite ir al CRUD de Producto.<br> 2. Listado de pedidos filtrado por estado (Pendiente, En Preparación), muestra nro, alumno y total => detalle muestra los datos completos del pedido y los productos seleccionados (Detalle)|
 |CUU/Epic|1. Realizar un pedido (carrito de compras tipo Take Away)..<br>2. Cambiar el estado de un pedido (Ej: de "Pendiente" a "Listo para retirar" por parte del bar).|
 
