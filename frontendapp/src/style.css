@@ -1,0 +1,144 @@
+/* 1. Variables y Reset */
+:root {
+    --primary-red: #962d2d;     /* Carmín Desaturado */
+    --secondary-white: #f5f5f5; 
+    --accent-gold: #ffc107;      
+    --text-dark: #212121;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* 2. Navegación (Navbar) */
+.navbar {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 0.8rem 3%; /* Bajé un poco el padding para que entre todo */
+    background-color: var(--primary-red);
+    border-bottom: 3px solid var(--accent-gold);
+    color: var(--secondary-white);
+    flex-wrap: nowrap; /* CRÍTICO: Todo en una sola fila */
+}
+
+.brand-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;          
+}
+
+.nav-logo {
+    height: 35px;      
+    width: auto;
+}
+
+.brand-name {
+    font-size: 1rem; /* Tamaño ajustado para que no ocupe tanto espacio */
+    font-weight: bold;
+    white-space: nowrap; /* Evita que el nombre se parta en dos líneas */
+}
+
+/* Botones de Auth (Centro) */
+.auth-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-auth {
+    background: transparent;
+    color: var(--secondary-white);
+    border: 1px solid var(--secondary-white);
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem; /* Botones más compactos */
+    transition: 0.3s;
+    white-space: nowrap;
+}
+
+.btn-auth:hover {
+    background-color: var(--secondary-white);
+    color: var(--primary-red);
+}
+
+/* Carrito (Derecha) */
+.cart-container {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 30px;
+}
+
+.cart-icon {
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+
+/* 3. Sección Hero */
+.hero {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 20px; 
+    background: linear-gradient(
+        to bottom, 
+        rgba(150, 45, 45, 0.85) 0%,   
+        rgba(150, 45, 45, 0.2) 50%,  
+        rgba(150, 45, 45, 0.9) 100%
+    ),
+    url('../public/assets/comida.jpg');    
+    background-size: cover;
+    background-position: center;
+    color: var(--secondary-white);
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+}
+
+.hero h1 {
+    font-size: clamp(1.6rem, 5vw, 3rem);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* 4. Botones Principales (Uno abajo del otro) */
+.hero-buttons {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-primary, .btn-secondary {
+    width: 240px; 
+    background-color: var(--accent-gold);
+    color: var(--text-dark);
+    font-weight: bold;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    background-color: #ffca28;
+    transform: translateY(-2px);
+}
+
+/* 5. Ajuste para pantallas muy chicas */
+@media (max-width: 400px) {
+    .brand-name {
+        font-size: 0.85rem; /* Achica el texto un poco más si la pantalla es mínima */
+    }
+}
