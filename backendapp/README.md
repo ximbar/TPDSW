@@ -1,24 +1,20 @@
-uwu# Backend UTN-Eat
-cece
+# Backend UTN-Eat
+
 ## Requisitos previos
 - Node.js 20+
-- MySQL corriendo localmente (o Docker) , de momento vamos a usar MySQL total estamos probando 
-
-
-Aca dejo un tutorial de como instalar la BD , chequen los comandos porque yo lo hago en linux y los puse para mi ahora.
-No se si cd o cp sea igual en la terminal por windows.
+- MySQL corriendo localmente
 
 ## Instalación
 
-```bash 
+```bash
 cd backendapp
 npm install
 cp .env.example .env
 ```
 
 Editá `.env` con los datos de tu base de datos MySQL (usuario, contraseña, nombre de la BD).
-La base de datos (`utneat` u otro nombre que elijas) tiene que existir antes de arrancar
-el proyecto; MikroORM crea las tablas solo, pero no la base en sí. Podés crearla con:
+La base de datos tiene que existir antes de arrancar el proyecto; MikroORM crea las
+tablas solo, pero no la base en sí:
 
 ```sql
 CREATE DATABASE utneat;
@@ -30,18 +26,16 @@ CREATE DATABASE utneat;
 npm run dev
 ```
 
-Esto levanta el server en `http://localhost:3000` con recarga automática, y al arrancar
+Levanta el server en `http://localhost:3000` con recarga automática, y al arrancar
 sincroniza el esquema (crea las tablas según las entidades).
 
 ## Probar el CRUD de ejemplo (Categoría)
 
-Con Postman, Thunder Client o curl:
-
-- `GET    /api/categorias` — listar todas
-- `GET    /api/categorias/:id` — obtener una
-- `POST   /api/categorias` — crear (body: `{ "nombre": "Bebidas", "descripcion": "..." }`)
-- `PUT    /api/categorias/:id` — actualizar
-- `DELETE /api/categorias/:id` — eliminar
+- `GET    /api/categorias`
+- `GET    /api/categorias/:id`
+- `POST   /api/categorias` (body: `{ "nombre": "Bebidas", "descripcion": "..." }`)
+- `PUT    /api/categorias/:id`
+- `DELETE /api/categorias/:id`
 
 ## Estructura del proyecto
 
@@ -66,13 +60,17 @@ Tomá `categoria.controller.ts` y `categoria.routes.ts` como plantilla:
 1. Copiá `categoria.controller.ts` a la carpeta de la entidad (ej: `usuario/usuario.controller.ts`)
    y reemplazá `Categoria` por la entidad correspondiente (ej: `Usuario`).
 2. Copiá `categoria.routes.ts` de la misma forma.
-3. Registrá el nuevo router en `app.ts` (ya están las líneas comentadas, solo hay que
-   descomentarlas y agregar el import).
+3. Registrá el nuevo router en `app.ts` (descomentá las líneas correspondientes).
+
+### Nota técnica: tipos explícitos en las entidades
+
+Vas a notar que cada `@Property()` y `@PrimaryKey()` lleva un `type` explícito
+(ej: `{ type: 'string' }`). Esto es porque el proyecto usa `tsx` para correr
+TypeScript directamente, y a diferencia de `ts-node`, `tsx` no emite metadata de
+tipos automáticamente. Si creás una propiedad nueva, acordate de ponerle el `type`
+a mano o vas a tener errores.
 
 ### Para los CRUDs dependientes (Producto depende de Categoria, Carta depende de Producto)
-
-En el `add` (POST), en vez de mandar `req.body` directo a `em.create`, hay que resolver
-la entidad relacionada primero. Ejemplo para Producto:
 
 ```ts
 export async function add(req: Request, res: Response) {
@@ -87,11 +85,9 @@ export async function add(req: Request, res: Response) {
 }
 ```
 
-### Casos de uso especiales (no son CRUD simple)
+### Casos de uso especiales
 
-- **Realizar un pedido (carrito take away)**: un endpoint `POST /api/pedidos` que reciba
-  una lista de productos + cantidades, calcule el total y cree el Pedido junto con sus
-  DetallePedido en una sola operación (usando `em.transactional()` de MikroORM).
-- **Cambiar estado de un pedido**: un endpoint específico, ej. `PATCH /api/pedidos/:id/estado`,
-  que reciba el nuevo estado y actualice solo ese campo (con validación de qué transiciones
-  de estado son válidas).
+- **Realizar un pedido (carrito take away)**: `POST /api/pedidos` que reciba productos +
+  cantidades, calcule el total y cree el Pedido con sus DetallePedido en una transacción
+  (`em.transactional()`).
+- **Cambiar estado de un pedido**: `PATCH /api/pedidos/:id/estado`.
