@@ -1,1 +1,0 @@
-console.log("¡El frontend está conectado correctamente!");

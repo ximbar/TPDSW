@@ -29,6 +29,41 @@ npm run dev
 Levanta el server en `http://localhost:3000` con recarga automática, y al arrancar
 sincroniza el esquema (crea las tablas según las entidades).
 
+## Autenticación
+
+Ahora hay cuentas de verdad. Los endpoints públicos son:
+
+- `POST /api/auth/register` — body: `{ "nombre": "...", "email": "...", "password": "..." }`.
+  Siempre crea el usuario con rol `CLIENTE` (nadie se puede auto-asignar admin).
+- `POST /api/auth/login` — body: `{ "email": "...", "password": "..." }`.
+
+Los dos devuelven `{ usuario, token }`. Ese `token` hay que mandarlo en cada
+pedido protegido con el header `Authorization: Bearer <token>`.
+
+### Cómo crear el primer usuario ADMINISTRADOR
+
+No hay ninguna pantalla para esto a propósito (por seguridad). Registrate
+normal desde `/api/auth/register` (vas a quedar como CLIENTE) y después
+subí tu rol directo en la base de datos:
+
+```sql
+UPDATE usuario SET rol = 'ADMINISTRADOR' WHERE email = 'tu-email@utn.edu.ar';
+```
+
+A partir de ahí, logueate de nuevo (`/api/auth/login`) para que el token
+nuevo ya incluya el rol actualizado.
+
+### Qué quedó protegido
+
+| Ruta | Quién puede |
+|---|---|
+| `GET` de categorías, productos, cartas, medios de pago | Cualquiera (público, es el menú) |
+| `POST` / `PUT` / `DELETE` de categorías, productos, cartas, medios de pago | Solo `ADMINISTRADOR` |
+| `POST /api/pedidos` (hacer un pedido) | Cualquier usuario logueado |
+| `GET /api/pedidos/mios` | El usuario logueado ve sus propios pedidos |
+| `GET /api/pedidos`, cambiar estado, reporte de caja | Solo `ADMINISTRADOR` |
+| CRUD de `/api/usuarios` | Solo `ADMINISTRADOR` (el alta normal es `/api/auth/register`) |
+
 ## Probar el CRUD de ejemplo (Categoría)
 
 - `GET    /api/categorias`

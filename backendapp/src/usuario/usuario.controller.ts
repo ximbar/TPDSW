@@ -1,13 +1,19 @@
 import { Request, Response } from 'express'
+import bcrypt from 'bcryptjs'
 import { orm } from '../shared/db/orm.js'
 import { Usuario } from './usuario.entity.js'
 
 const em = orm.em
 
+function sinPassword(usuario: Usuario) {
+  const { password, ...resto } = usuario
+  return resto
+}
+
 export async function findAll(req: Request, res: Response) {
   try {
     const usuarios = await em.find(Usuario, {})
-    res.status(200).json({ message: 'usuarios encontrados', data: usuarios })
+    res.status(200).json({ message: 'usuarios encontrados', data: usuarios.map(sinPassword) })
   } catch (error: any) {
     res.status(500).json({ message: error.message })
   }
@@ -17,7 +23,7 @@ export async function findOne(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id)
     const usuario = await em.findOneOrFail(Usuario, { id })
-    res.status(200).json({ message: 'usuario encontrado', data: usuario })
+    res.status(200).json({ message: 'usuario encontrado', data: sinPassword(usuario) })
   } catch (error: any) {
     res.status(404).json({ message: 'usuario no encontrado' })
   }
@@ -25,9 +31,12 @@ export async function findOne(req: Request, res: Response) {
 
 export async function add(req: Request, res: Response) {
   try {
+    if (req.body.password) {
+      req.body.password = await bcrypt.hash(req.body.password, 10)
+    }
     const usuario = em.create(Usuario, req.body)
     await em.flush()
-    res.status(201).json({ message: 'usuario creado', data: usuario })
+    res.status(201).json({ message: 'usuario creado', data: sinPassword(usuario) })
   } catch (error: any) {
     res.status(500).json({ message: error.message })
   }
@@ -37,9 +46,12 @@ export async function update(req: Request, res: Response) {
   try {
     const id = Number.parseInt(req.params.id)
     const usuario = await em.findOneOrFail(Usuario, { id })
+    if (req.body.password) {
+      req.body.password = await bcrypt.hash(req.body.password, 10)
+    }
     em.assign(usuario, req.body)
     await em.flush()
-    res.status(200).json({ message: 'usuario actualizado', data: usuario })
+    res.status(200).json({ message: 'usuario actualizado', data: sinPassword(usuario) })
   } catch (error: any) {
     res.status(500).json({ message: error.message })
   }

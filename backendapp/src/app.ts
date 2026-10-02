@@ -8,6 +8,7 @@ import { productoRouter } from './producto/producto.routes.js'
 import { cartaRouter } from './carta/carta.routes.js'
 import { pedidoRouter } from './pedido/pedido.routes.js'
 import { reporteRouter } from './reporte/reporte.routes.js'
+import { authRouter } from './auth/auth.routes.js'
 
 export const app = express()
 
@@ -15,6 +16,7 @@ app.use(cors())
 app.use(express.json())
 app.use(forkEntityManager)
 
+app.use('/api/auth', authRouter)
 app.use('/api/categorias', categoriaRouter)
 app.use('/api/usuarios', usuarioRouter)
 app.use('/api/mediosDePago', medioDePagoRouter)

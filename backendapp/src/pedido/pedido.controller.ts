@@ -37,12 +37,30 @@ export async function findOne(req: Request, res: Response) {
   }
 }
 
+// GET /api/pedidos/mios -> el cliente logueado ve solo sus propios pedidos
+export async function findMisPedidos(req: Request, res: Response) {
+  try {
+    const usuarioId = req.usuario!.id
+    const pedidos = await em.find(
+      Pedido,
+      { usuario: usuarioId },
+      { populate: ['medioDePago', 'detalles', 'detalles.producto'], orderBy: { fecha: 'DESC' } }
+    )
+    res.status(200).json({ message: 'pedidos encontrados', data: pedidos })
+  } catch (error: any) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
 /**
  * CASO DE USO: Realizar pedido (carrito take away)
  *
+ * Requiere estar logueado (ver middleware verifyToken en las rutas).
+ * El usuario del pedido se toma del TOKEN, no del body: así nadie puede
+ * hacer un pedido a nombre de otra persona mandando un id distinto.
+ *
  * Body esperado:
  * {
- *   "usuario": 1,
  *   "medioDePago": 1,
  *   "items": [
  *     { "producto": 1, "cantidad": 2 },
@@ -54,7 +72,8 @@ export async function findOne(req: Request, res: Response) {
  * base para cada producto, así evitamos que alguien lo manipule desde el front.
  */
 export async function realizarPedido(req: Request, res: Response) {
-  const { usuario, medioDePago, items } = req.body
+  const usuarioId = req.usuario!.id // viene del token (verifyToken ya lo validó)
+  const { medioDePago, items } = req.body
 
   if (!Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ message: 'el pedido necesita al menos un producto (items)' })
@@ -64,7 +83,7 @@ export async function realizarPedido(req: Request, res: Response) {
     // em.transactional agrupa todo en una transacción:
     // si algo falla a mitad de camino, se revierte TODO (no queda un pedido a medias)
     const pedidoCreado = await em.transactional(async (tem) => {
-      const usuarioEntity = await tem.findOneOrFail(Usuario, { id: usuario })
+      const usuarioEntity = await tem.findOneOrFail(Usuario, { id: usuarioId })
       const medioDePagoEntity = await tem.findOneOrFail(MedioDePago, { id: medioDePago })
 
       const pedido = tem.create(Pedido, {
