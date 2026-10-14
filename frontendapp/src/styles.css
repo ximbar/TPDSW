@@ -1,5 +1,5 @@
 :root {
-  --board: #1f2a21;
+  --board: black ;
   --board-dim: #27342a;
   --paper: #f2f1e9;
   --ink: #1b241c;
@@ -183,6 +183,7 @@ select {
   color: var(--paper);
 }
 
+/* este es el boton de "ENTRAR" para tener referencia */
 .auth-switch {
   background: transparent;
   border: none;
@@ -573,4 +574,78 @@ select {
   font-family: var(--font-display);
   font-size: 1.3rem;
   margin: 0.75rem 0 0.4rem;
+}
+
+.pantalla-vacia {
+  text-align: center;
+  padding: 5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--mustard); /* Usa el amarillo/mostaza del menú */
+}
+
+.pantalla-vacia h2 {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.pantalla-vacia p {
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+/* ---------- Botones Gigantes de Categorías ---------- */
+.botones-grandes {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.btn-categoria-gigante {
+  background: var(--board-dim);
+  border: 2px solid var(--mustard);
+  color: var(--mustard);
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  width: 100%;
+  max-width: 350px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.btn-categoria-gigante:hover {
+  background: var(--mustard);
+  color: var(--ink);
+  transform: translateY(-5px);
+}
+
+.btn-volver {
+  background: transparent;
+  border: none;
+  color: var(--paper);
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  text-decoration: underline;
+  opacity: 0.8;
+  display: block;
+}
+
+.btn-volver:hover {
+  color: var(--mustard);
+  opacity: 1;
+}
+
+/* ---------- Imagen de la Tarjeta ---------- */
+.card-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover; /* Esto hace que la foto no se estire feo*/
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
 }

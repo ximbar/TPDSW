@@ -32,7 +32,7 @@ export default function App() {
         const [cats, medios] = await Promise.all([api.getCategorias(), api.getMediosDePago()])
         setCategorias(cats)
         setMediosDePago(medios)
-        if (cats.length > 0) setCategoriaSeleccionada(cats[0].id)
+        /*if (cats.length > 0) setCategoriaSeleccionada(cats[0].id)*/
       } catch (err) {
         setErrorGeneral(
           'No se pudo conectar con el servidor. Confirmá que el backend esté corriendo en ' +
@@ -127,21 +127,35 @@ export default function App() {
         </p>
       )}
 
-      <CategoryTabs
-        categorias={categorias}
-        selectedId={categoriaSeleccionada}
-        onSelect={setCategoriaSeleccionada}
-      />
-
-      <main className="main">
+<main className="main">
         {vista === 'admin' ? (
           <AdminPanel
             categorias={categorias}
             productos={productos}
             onProductosCambiaron={recargarProductos}
           />
+        ) : categoriaSeleccionada === null ? (
+          <div className="selector-categorias">
+            <h2 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '2rem' }}>¿Qué tenés ganas de comer?</h2>
+            <div className="botones-grandes">
+              {categorias.map(cat => (
+                <button 
+                  key={cat.id} 
+                  className="btn-categoria-gigante"
+                  onClick={() => setCategoriaSeleccionada(cat.id)}
+                >
+                  {cat.nombre}
+                </button>
+              ))}
+            </div>
+          </div>
         ) : (
-          <ProductGrid productos={productos} loading={cargandoProductos} onAdd={agregarAlCarrito} />
+          <div>
+            <button className="btn-volver" onClick={() => setCategoriaSeleccionada(null)}>
+              ← Volver a elegir turno
+            </button>
+            <ProductGrid productos={productos} loading={cargandoProductos} onAdd={agregarAlCarrito} />
+          </div>
         )}
       </main>
 
@@ -160,3 +174,4 @@ export default function App() {
     </div>
   )
 }
+

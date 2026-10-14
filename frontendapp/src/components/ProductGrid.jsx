@@ -6,7 +6,10 @@ export default function ProductGrid({ productos, loading, onAdd }) {
   }
 
   if (productos.length === 0) {
-    return <p className="empty-state">No hay productos en esta categoría todavía.</p>
+    return <div className="pantalla-vacia">
+              <h2>🍽️ Ups...</h2>
+              <p>Aún no hay stock disponible.</p>
+            </div>
   }
 
   return (
