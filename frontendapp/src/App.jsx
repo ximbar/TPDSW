@@ -62,6 +62,7 @@ export default function App() {
   const handleAuthenticated = (token, usuarioData) => {
     guardarSesion(token, usuarioData)
     setUsuario(usuarioData)
+    setCategoriaSeleccionada(null) // <-- AGREGAR ESTA LÍNEA ACÁ
   }
 
   const handleLogout = () => {
@@ -70,6 +71,7 @@ export default function App() {
     setCartItems([])
     setPedidoConfirmado(null)
     setVista('menu')
+    setCategoriaSeleccionada(null) // <-- Y AGREGAR ESTA LÍNEA ACÁ
   }
 
   const agregarAlCarrito = (producto, cantidad) => {
