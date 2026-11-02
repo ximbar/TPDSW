@@ -27,10 +27,16 @@ export const api = {
   getCategorias: () => request('/api/categorias'),
   getProductosPorCategoria: (categoriaId) => request(`/api/productos?categoria=${categoriaId}`),
   getMediosDePago: () => request('/api/mediosDePago'),
+  
+  // ACA ESTA EL ARREGLO: Función para traer TODO el menú sin filtrar
+  getProductos: () => request('/api/productos'),
 
   // administracion de productos (requiere admin, el token ya va solo)
   crearProducto: (payload) => request('/api/productos', { method: 'POST', body: JSON.stringify(payload) }),
   eliminarProducto: (id) => request(`/api/productos/${id}`, { method: 'DELETE' }),
+  
+  // ACA ESTA EL ARREGLO: Función para editar un producto existente
+  actualizarProducto: (id, payload) => request(`/api/productos/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
 
   // pedidos (requiere estar logueado)
   realizarPedido: (payload) => request('/api/pedidos', { method: 'POST', body: JSON.stringify(payload) }),

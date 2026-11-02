@@ -8,21 +8,42 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
   const [categoriaId, setCategoriaId] = useState('')
   const [error, setError] = useState('')
   const [enviando, setEnviando] = useState(false)
+  
+  const [productoEnEdicion, setProductoEnEdicion] = useState(null)
+  
+  // Estados para nuestros dos filtros (categoría y texto)
+  const [filtroCategoria, setFiltroCategoria] = useState('')
+  const [busqueda, setBusqueda] = useState('')
 
-  const handleCrear = async (e) => {
+  const limpiarFormulario = () => {
+    setNombre('')
+    setDescripcion('')
+    setPrecio('')
+    setCategoriaId('')
+    setProductoEnEdicion(null)
+    setError('')
+  }
+
+  const handleGuardar = async (e) => {
     e.preventDefault()
     setError('')
     setEnviando(true)
     try {
-      await api.crearProducto({
+      const precioCorregido = String(precio).replace(',', '.');
+      
+      const datosProducto = {
         nombre,
         descripcion,
-        precio: Number(precio),
+        precio: precioCorregido, 
         categoria: Number(categoriaId),
-      })
-      setNombre('')
-      setDescripcion('')
-      setPrecio('')
+      }
+      if (productoEnEdicion) {
+        await api.actualizarProducto(productoEnEdicion.id, datosProducto)
+      } else {
+        await api.crearProducto(datosProducto)
+      }
+      
+      limpiarFormulario()
       onProductosCambiaron()
     } catch (err) {
       setError(err.message)
@@ -31,81 +52,158 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
     }
   }
 
+  const handleEditar = (producto) => {
+    setProductoEnEdicion(producto)
+    setNombre(producto.nombre)
+    setDescripcion(producto.descripcion)
+    setPrecio(producto.precio)
+    const catId = producto.categoria?.id || producto.categoria || producto.categoria_id;
+    setCategoriaId(catId);
+  }
+
   const handleEliminar = async (id) => {
+    if (!window.confirm('¿Seguro que querés eliminar este producto?')) return;
+    
     try {
       await api.eliminarProducto(id)
+      if (productoEnEdicion && productoEnEdicion.id === id) {
+        limpiarFormulario()
+      }
       onProductosCambiaron()
     } catch (err) {
       setError(err.message)
     }
   }
 
+// Lógica del buscador: Filtra por categoría Y por lo que escribas
+  const productosFiltrados = productos.filter(p => {
+    // 1. Verificamos la categoría asegurándonos de convertir todo a texto para comparar
+    const coincideCategoria = filtroCategoria 
+      ? String(p.categoria?.id || p.categoria || p.categoria_id) === String(filtroCategoria) 
+      : true;
+      
+    // 2. Verificamos el nombre manejando posibles errores si el nombre viene vacío o nulo
+    const nombreSeguro = p.nombre ? String(p.nombre).toLowerCase() : '';
+    const busquedaSegura = busqueda ? busqueda.toLowerCase().trim() : '';
+    const coincideNombre = nombreSeguro.includes(busquedaSegura);
+    
+    return coincideCategoria && coincideNombre;
+  });
+
   return (
-    <div className="admin-panel">
-      <h2 className="section-title">Administrar productos</h2>
+    <div className="contenedor-admin">
+      <div className="barra-superior-admin">
+        <h2 className="titulo-seccion">Panel de Control de Productos</h2>
+        <button className="boton-nuevo" onClick={limpiarFormulario}>+ Nuevo Producto</button>
+      </div>
 
-      <form className="admin-form" onSubmit={handleCrear}>
-        <div className="field">
-          <label htmlFor="admin-nombre">Nombre</label>
-          <input id="admin-nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
-        </div>
-        <div className="field">
-          <label htmlFor="admin-desc">Descripción</label>
-          <input id="admin-desc" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
-        </div>
-        <div className="field">
-          <label htmlFor="admin-precio">Precio</label>
-          <input
-            id="admin-precio"
-            type="number"
-            min="0"
-            step="1"
-            value={precio}
-            onChange={(e) => setPrecio(e.target.value)}
-            required
-          />
-        </div>
-        <div className="field">
-          <label htmlFor="admin-categoria">Categoría</label>
-          <select
-            id="admin-categoria"
-            value={categoriaId}
-            onChange={(e) => setCategoriaId(e.target.value)}
-            required
-          >
-            <option value="">Elegí una categoría</option>
-            {categorias.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nombre}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="disposicion-admin">
+        
+        {/* COLUMNA IZQUIERDA: Lista de Productos */}
+        <section className="seccion-lista-admin">
+          
+          {/* NUEVO BUSCADOR Y FILTRO */}
+          <div className="filtro-admin" style={{ display: 'flex', gap: '0.8rem' }}>
+            <input 
+              type="text" 
+              placeholder="Buscar por nombre..." 
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="selector-filtro"
+              style={{ flex: 1 }}
+            />
+            <select 
+              value={filtroCategoria} 
+              onChange={(e) => setFiltroCategoria(e.target.value)}
+              className="selector-filtro"
+            >
+              <option value="">Todas las categorías</option>
+              {categorias.map(c => (
+                <option key={c.id} value={c.id}>{c.nombre}</option>
+              ))}
+            </select>
+          </div>
 
-        {error && <p className="feedback error">{error}</p>}
+          <div className="contenedor-lista-admin">
+            {productosFiltrados.length === 0 ? (
+              <p className="estado-vacio">No hay productos para mostrar.</p>
+            ) : (
+              <ul className="lista-cuadricula-admin">
+                {productosFiltrados.map((p) => (
+                  <li key={p.id} className="tarjeta-item-admin">
+                    <div className="info-item">
+                      <strong className="nombre-item">{p.nombre}</strong>
+                      <span className="precio-item">${Number(p.precio).toFixed(0)}</span>
+                    </div>
+                    <div className="acciones-item">
+                      <button className="boton-accion editar" onClick={() => handleEditar(p)}>Editar</button>
+                      <button className="boton-accion borrar" onClick={() => handleEliminar(p.id)}>Borrar</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
 
-        <button className="confirm-btn" type="submit" disabled={enviando}>
-          {enviando ? 'Creando...' : 'Crear producto'}
-        </button>
-      </form>
+        {/* COLUMNA DERECHA: Formulario */}
+        <section className="seccion-formulario-admin">
+          <div className="tarjeta-formulario-admin">
+            <h3>{productoEnEdicion ? 'Editando Producto' : 'Crear Nuevo Producto'}</h3>
+            
+            <form className="formulario-admin" onSubmit={handleGuardar}>
+              <div className="campo">
+                <label>Nombre</label>
+                <input value={nombre} onChange={(e) => setNombre(e.target.value)} required placeholder="Ej: Milanesa con papas" />
+              </div>
+              <div className="campo">
+                <label>Descripción</label>
+                <textarea 
+                  value={descripcion} 
+                  onChange={(e) => setDescripcion(e.target.value)} 
+                  rows="3"
+                  placeholder="Detalles del plato..."
+                />
+              </div>
+              <div className="fila-campos">
+                <div className="campo mitad">
+                  <label>Precio ($)</label>
+                  <input 
+                    type="text" 
+                    value={precio} 
+                    onChange={(e) => setPrecio(e.target.value)} 
+                    required 
+                    placeholder="Ej: 3000" 
+                  />
+                </div>
+                <div className="campo mitad">
+                  <label>Categoría</label>
+                  <select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)} required>
+                    <option value="" disabled>Seleccionar...</option>
+                    {categorias.map((c) => (
+                      <option key={c.id} value={c.id}>{c.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-      <h3 className="admin-list-title">Productos de esta categoría</h3>
-      {productos.length === 0 ? (
-        <p className="empty-state">No hay productos cargados en esta categoría.</p>
-      ) : (
-        <ul className="admin-list">
-          {productos.map((p) => (
-            <li key={p.id} className="admin-list-item">
-              <span>
-                {p.nombre} — ${Number(p.precio).toFixed(0)}
-              </span>
-              <button className="cart-item-remove" onClick={() => handleEliminar(p.id)}>
-                Eliminar
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+              {error && <p className="mensaje-error">{error}</p>}
+
+              <div className="acciones-formulario">
+                {productoEnEdicion && (
+                  <button type="button" className="boton-cancelar" onClick={limpiarFormulario}>
+                    Cancelar
+                  </button>
+                )}
+                <button type="submit" className="boton-guardar" disabled={enviando}>
+                  {enviando ? 'Guardando...' : (productoEnEdicion ? 'Actualizar' : 'Crear Producto')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+      </div>
     </div>
   )
 }

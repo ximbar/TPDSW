@@ -32,7 +32,7 @@ export default function AuthScreen({ onAuthenticated }) {
         <p className="logo" style={{ marginBottom: '0.3rem' }}>
           UTN <span>Eat</span>
         </p>
-        <h1 className="auth-title">{modo === 'login' ? 'Iniciá sesión' : 'Creá tu cuenta'}</h1>
+        <h1 className="auth-title">{modo === 'login' ? ' Metete a tu cuenta nenita' : 'Creá tu cuenta'}</h1>
 
         {modo === 'registro' && (
           <div className="field">

@@ -16,7 +16,7 @@ export default function App() {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null)
   const [productos, setProductos] = useState([])
   const [cargandoProductos, setCargandoProductos] = useState(false)
-  const [cartItems, setCartItems] = useState([]) // [{ producto, cantidad }]
+  const [cartItems, setCartItems] = useState([]) 
   const [cartOpen, setCartOpen] = useState(false)
   const [mediosDePago, setMediosDePago] = useState([])
   const [pedidoConfirmado, setPedidoConfirmado] = useState(null)
@@ -24,7 +24,6 @@ export default function App() {
 
   const haySesion = Boolean(getToken() && usuario)
 
-  // Carga inicial: categorias y medios de pago (publico, no hace falta estar logueado)
   useEffect(() => {
     if (!haySesion) return
     async function cargarDatosIniciales() {
@@ -32,7 +31,6 @@ export default function App() {
         const [cats, medios] = await Promise.all([api.getCategorias(), api.getMediosDePago()])
         setCategorias(cats)
         setMediosDePago(medios)
-        if (cats.length > 0) setCategoriaSeleccionada(cats[0].id)
       } catch (err) {
         setErrorGeneral(
           'No se pudo conectar con el servidor. Confirmá que el backend esté corriendo en ' +
@@ -43,25 +41,43 @@ export default function App() {
     cargarDatosIniciales()
   }, [haySesion])
 
+  // ACÁ ESTÁ EL ARREGLO: 
   const recargarProductos = () => {
-    if (!categoriaSeleccionada) return
     setCargandoProductos(true)
-    api
-      .getProductosPorCategoria(categoriaSeleccionada)
-      .then(setProductos)
-      .catch(() => setProductos([]))
-      .finally(() => setCargandoProductos(false))
+    
+    // Si estamos en la vista de admin, pedimos TODOS los productos (sin filtrar)
+    if (vista === 'admin') {
+      api
+        .getProductos()
+        .then(setProductos)
+        .catch(() => setProductos([]))
+        .finally(() => setCargandoProductos(false))
+    } 
+    // Si somos clientes y elegimos una categoría, pedimos solo esos
+    else if (categoriaSeleccionada) {
+      api
+        .getProductosPorCategoria(categoriaSeleccionada)
+        .then(setProductos)
+        .catch(() => setProductos([]))
+        .finally(() => setCargandoProductos(false))
+    } 
+    // Si no somos admin y no elegimos categoría, no traemos nada
+    else {
+      setProductos([])
+      setCargandoProductos(false)
+    }
   }
 
-  // Cada vez que cambia la categoria seleccionada, recargamos los productos
+  // Ahora le avisamos al sistema que recargue si cambiamos de categoría O de vista (menú a admin)
   useEffect(() => {
     recargarProductos()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoriaSeleccionada])
+  }, [categoriaSeleccionada, vista])
 
   const handleAuthenticated = (token, usuarioData) => {
     guardarSesion(token, usuarioData)
     setUsuario(usuarioData)
+    setCategoriaSeleccionada(null)
   }
 
   const handleLogout = () => {
@@ -70,6 +86,7 @@ export default function App() {
     setCartItems([])
     setPedidoConfirmado(null)
     setVista('menu')
+    setCategoriaSeleccionada(null) 
   }
 
   const agregarAlCarrito = (producto, cantidad) => {
@@ -127,12 +144,6 @@ export default function App() {
         </p>
       )}
 
-      <CategoryTabs
-        categorias={categorias}
-        selectedId={categoriaSeleccionada}
-        onSelect={setCategoriaSeleccionada}
-      />
-
       <main className="main">
         {vista === 'admin' ? (
           <AdminPanel
@@ -140,8 +151,28 @@ export default function App() {
             productos={productos}
             onProductosCambiaron={recargarProductos}
           />
+        ) : categoriaSeleccionada === null ? (
+          <div className="selector-categorias">
+            <h2 style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '2rem' }}>¿Qué tenés ganas de comer?</h2>
+            <div className="botones-grandes">
+              {categorias.map(cat => (
+                <button 
+                  key={cat.id} 
+                  className="btn-categoria-gigante"
+                  onClick={() => setCategoriaSeleccionada(cat.id)}
+                >
+                  {cat.nombre}
+                </button>
+              ))}
+            </div>
+          </div>
         ) : (
-          <ProductGrid productos={productos} loading={cargandoProductos} onAdd={agregarAlCarrito} />
+          <div>
+            <button className="btn-volver" onClick={() => setCategoriaSeleccionada(null)}>
+              ← Volver a elegir turno
+            </button>
+            <ProductGrid productos={productos} loading={cargandoProductos} onAdd={agregarAlCarrito} />
+          </div>
         )}
       </main>
 
