@@ -37,7 +37,11 @@ export const api = {
   
   // ACA ESTA EL ARREGLO: Función para editar un producto existente
   actualizarProducto: (id, payload) => request(`/api/productos/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
-
+  
+  // administracion de categorias (requiere admin, el token ya va solo)
+  crearCategoria: (payload) => request('/api/categorias', { method: 'POST', body: JSON.stringify(payload) }),
+  actualizarCategoria: (id, payload) => request(`/api/categorias/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
+  eliminarCategoria: (id) => request(`/api/categorias/${id}`, { method: 'DELETE' }),
   // pedidos (requiere estar logueado)
   realizarPedido: (payload) => request('/api/pedidos', { method: 'POST', body: JSON.stringify(payload) }),
   getMisPedidos: () => request('/api/pedidos/mios'),
