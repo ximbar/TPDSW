@@ -41,7 +41,9 @@ export async function add(req: Request, res: Response) {
   try {
     const categoria = await em.findOneOrFail(Categoria, { id: req.body.categoria })
     const carta = req.body.carta ? await em.findOneOrFail(Carta, { id: req.body.carta }) : undefined
-
+    const stock = req.body.stock !== undefined && req.body.stock !== '' 
+      ? Number(req.body.stock) 
+      : 1;
     const producto = em.create(Producto, { ...req.body, categoria, carta })
     await em.flush()
     res.status(201).json({ message: 'producto creado', data: producto })
@@ -61,7 +63,9 @@ export async function update(req: Request, res: Response) {
     if (req.body.carta) {
       req.body.carta = await em.findOneOrFail(Carta, { id: req.body.carta })
     }
-
+    if (req.body.stock !== undefined && req.body.stock !== '') {
+      req.body.stock = Number(req.body.stock);
+    }
     em.assign(producto, req.body)
     await em.flush()
     res.status(200).json({ message: 'producto actualizado', data: producto })

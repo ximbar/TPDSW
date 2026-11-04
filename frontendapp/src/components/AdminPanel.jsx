@@ -1,7 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { api } from '../api/client.js'
-
-export default function AdminPanel({ categorias, productos, onProductosCambiaron }) {
+import { CategoriasAdmin } from './CategoriasAdmin.jsx'
+export default function AdminPanel({ categorias, productos, onProductosCambiaron, onCategoriasCambiaron }) {
+  const [tabActiva, setTabActiva] = useState(() => {
+    return localStorage.getItem('admin_tab_activa') || 'productos';
+  });
+  useEffect(() => {
+    localStorage.setItem('admin_tab_activa', tabActiva);
+  }, [tabActiva]);
+  const [stock, setStock] = useState('1')
   const [nombre, setNombre] = useState('')
   const [descripcion, setDescripcion] = useState('')
   const [precio, setPrecio] = useState('')
@@ -20,6 +27,7 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
     setDescripcion('')
     setPrecio('')
     setCategoriaId('')
+    setStock('1')
     setProductoEnEdicion(null)
     setError('')
   }
@@ -36,6 +44,7 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
         descripcion,
         precio: precioCorregido, 
         categoria: Number(categoriaId),
+        stock: stock !== '' ? Number(stock) : 1,
       }
       if (productoEnEdicion) {
         await api.actualizarProducto(productoEnEdicion.id, datosProducto)
@@ -59,6 +68,7 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
     setPrecio(producto.precio)
     const catId = producto.categoria?.id || producto.categoria || producto.categoria_id;
     setCategoriaId(catId);
+    setStock(producto.stock !== undefined ? producto.stock : 1)
   }
 
   const handleEliminar = async (id) => {
@@ -92,6 +102,44 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
 
   return (
     <div className="contenedor-admin">
+      {/* BOTONES DE PESTAÑAS */}
+      <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '1.2rem' }}>
+        <button
+          type="button"
+          onClick={() => setTabActiva('productos')}
+          style={{
+            padding: '0.6rem 1.2rem',
+            background: tabActiva === 'productos' ? '#2f4f2f' : '#e5e7eb',
+            color: tabActiva === 'productos' ? '#ffffff' : '#1f2937',
+            border: 'none',
+            borderRadius: '6px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}
+        >
+          Gestión de Productos
+        </button>
+        <button
+          type="button"
+          onClick={() => setTabActiva('categorias')}
+          style={{
+            padding: '0.6rem 1.2rem',
+            background: tabActiva === 'categorias' ? '#2f4f2f' : '#e5e7eb',
+            color: tabActiva === 'categorias' ? '#ffffff' : '#1f2937',
+            border: 'none',
+            borderRadius: '6px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}
+        >
+          Gestión de Categorías
+        </button>
+      </div>
+
+      {tabActiva === 'categorias' ? (
+        <CategoriasAdmin onCategoriasCambiaron={onCategoriasCambiaron} />
+      ) : (
+        <>
       <div className="barra-superior-admin">
         <h2 className="titulo-seccion">Panel de Control de Productos</h2>
         <button className="boton-nuevo" onClick={limpiarFormulario}>+ Nuevo Producto</button>
@@ -129,18 +177,34 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
               <p className="estado-vacio">No hay productos para mostrar.</p>
             ) : (
               <ul className="lista-cuadricula-admin">
-                {productosFiltrados.map((p) => (
-                  <li key={p.id} className="tarjeta-item-admin">
-                    <div className="info-item">
-                      <strong className="nombre-item">{p.nombre}</strong>
-                      <span className="precio-item">${Number(p.precio).toFixed(0)}</span>
-                    </div>
-                    <div className="acciones-item">
-                      <button className="boton-accion editar" onClick={() => handleEditar(p)}>Editar</button>
-                      <button className="boton-accion borrar" onClick={() => handleEliminar(p.id)}>Borrar</button>
-                    </div>
-                  </li>
-                ))}
+                {productosFiltrados.map((p) => {
+                  const nombreCat =
+                    p.categoria?.nombre ||
+                    categorias.find((c) => c.id === (p.categoria?.id || p.categoriaId || p.categoria))?.nombre ||
+                    'Sin categoría';
+                  return (
+                    <li key={p.id} className="tarjeta-item-admin">
+                      <div className="info-item">
+                        <strong className="nombre-item">{p.nombre}</strong>
+                        {/* Etiqueta de Categoría */}
+                        <span style={{ fontSize: '0.8rem', color: '#0284c7', background: '#e0f2fe', padding: '2px 6px', borderRadius: '4px', margin: '4px 0', display: 'inline-block' }}>
+                          {nombreCat}
+                        </span>
+                        {/* Precio y Stock */}
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                          <span className="precio-item">${Number(p.precio).toFixed(0)}</span>
+                          <span style={{ fontSize: '0.85rem', color: Number(p.stock) > 0 ? '#16a34a' : '#dc2626', fontWeight: 600 }}>
+                            Stock: {p.stock !== undefined ? p.stock : 1}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="acciones-item">
+                        <button type="button" className="boton-accion editar" onClick={() => handleEditar(p)}>Editar</button>
+                        <button type="button" className="boton-accion borrar" onClick={() => handleEliminar(p.id)}>Borrar</button>
+                      </div>
+                    </li>
+                    );
+                  })}
               </ul>
             )}
           </div>
@@ -186,7 +250,17 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
                   </select>
                 </div>
               </div>
-
+              <div style={{ marginBottom: '1rem' }}>
+                <label>Stock</label>
+                <input
+                type="number"
+                min="0"
+                value={stock}
+                onChange={(e) => setStock(e.target.value)}
+                required
+                placeholder="Ej: 10"
+                />
+              </div>
               {error && <p className="mensaje-error">{error}</p>}
 
               <div className="acciones-formulario">
@@ -204,6 +278,8 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
         </section>
 
       </div>
-    </div>
-  )
+      </>
+    )}
+  </div>
+)
 }

@@ -13,6 +13,9 @@ export class Producto {
   @Property({ type: 'text', nullable: true })
   descripcion?: string
 
+  @Property({ default: 1 })
+  stock: number = 1;
+
   @Property({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   precio!: number
 
