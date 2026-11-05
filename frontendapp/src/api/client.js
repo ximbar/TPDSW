@@ -28,21 +28,32 @@ export const api = {
   getProductosPorCategoria: (categoriaId) => request(`/api/productos?categoria=${categoriaId}`),
   getMediosDePago: () => request('/api/mediosDePago'),
   
-  // ACA ESTA EL ARREGLO: Función para traer TODO el menú sin filtrar
+  // Función para traer TODO el menú sin filtrar
   getProductos: () => request('/api/productos'),
 
   // administracion de productos (requiere admin, el token ya va solo)
   crearProducto: (payload) => request('/api/productos', { method: 'POST', body: JSON.stringify(payload) }),
   eliminarProducto: (id) => request(`/api/productos/${id}`, { method: 'DELETE' }),
   
-  // ACA ESTA EL ARREGLO: Función para editar un producto existente
+  // Función para editar un producto existente
   actualizarProducto: (id, payload) => request(`/api/productos/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   
   // administracion de categorias (requiere admin, el token ya va solo)
   crearCategoria: (payload) => request('/api/categorias', { method: 'POST', body: JSON.stringify(payload) }),
   actualizarCategoria: (id, payload) => request(`/api/categorias/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   eliminarCategoria: (id) => request(`/api/categorias/${id}`, { method: 'DELETE' }),
-  // pedidos (requiere estar logueado)
+  
+ // pedidos (requiere estar logueado)
   realizarPedido: (payload) => request('/api/pedidos', { method: 'POST', body: JSON.stringify(payload) }),
   getMisPedidos: () => request('/api/pedidos/mios'),
+
+  // administracion de pedidos (admin)
+  getTodosLosPedidos: (estado = '') => request(estado ? `/api/pedidos?estado=${estado}` : '/api/pedidos'),
+  cambiarEstadoPedido: (id, estado) => request(`/api/pedidos/${id}/estado`, { method: 'PATCH', body: JSON.stringify({ estado }) }),
+  eliminarPedido: (id) => request(`/api/pedidos/${id}`, { method: 'DELETE' }),
+
+ // medios de pago (admin)
+  crearMedioPago: (payload) => request('/api/mediosDePago', { method: 'POST', body: JSON.stringify(payload) }),
+  actualizarMedioPago: (id, payload) => request(`/api/mediosDePago/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
+  eliminarMedioPago: (id) => request(`/api/mediosDePago/${id}`, { method: 'DELETE' }),
 }
