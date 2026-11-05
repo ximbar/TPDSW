@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { api } from '../api/client.js'
 import { CategoriasAdmin } from './CategoriasAdmin.jsx'
-export default function AdminPanel({ categorias, productos, onProductosCambiaron, onCategoriasCambiaron }) {
+import { AdminMediosPago } from './AdminMediosPago.jsx'
+export default function AdminPanel({ categorias, productos, onProductosCambiaron, onCategoriasCambiaron, onMediosPagoCambiaron }) {
   const [tabActiva, setTabActiva] = useState(() => {
     return localStorage.getItem('admin_tab_activa') || 'productos';
   });
@@ -134,11 +135,34 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
         >
           Gestión de Categorías
         </button>
+        {/* BOTÓN NUEVO: */}
+        <button
+          type="button"
+          onClick={() => setTabActiva('mediosPago')}
+          style={{
+            padding: '0.6rem 1.2rem',
+            background: tabActiva === 'mediosPago' ? '#2f4f2f' : '#e5e7eb',
+            color: tabActiva === 'mediosPago' ? '#ffffff' : '#1f2937',
+            border: 'none',
+            borderRadius: '6px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}
+        >
+          Gestión de Medios de Pago
+        </button>
       </div>
 
-      {tabActiva === 'categorias' ? (
+      {/* LÓGICA DE RENDERIZADO */}
+      {tabActiva === 'categorias' && (
         <CategoriasAdmin onCategoriasCambiaron={onCategoriasCambiaron} />
-      ) : (
+      )}
+      
+      {tabActiva === 'mediosPago' && (
+        <AdminMediosPago onMedioPagosCambiaron={onMediosPagoCambiaron} />
+      )}
+      
+      {tabActiva === 'productos' && (
         <>
       <div className="barra-superior-admin">
         <h2 className="titulo-seccion">Panel de Control de Productos</h2>

@@ -12,6 +12,7 @@ import ProductGrid from "./components/ProductGrid.jsx";
 import CartDrawer from "./components/CartDrawer.jsx";
 import AuthScreen from "./components/AuthScreen.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
+import { AdminMediosPago } from "./components/AdminMediosPago.jsx";
 
 export default function App() {
   const [usuario, setUsuario] = useState(getUsuarioGuardado());
@@ -19,7 +20,10 @@ export default function App() {
   const [vista, setVista] = useState(() => {
     return localStorage.getItem("vistaActual") || "menu";
   });
-  // Y agregá este efecto justo abajo para guardar cada cambio de pantalla:
+
+
+
+ 
   useEffect(() => {
     localStorage.setItem("vistaActual", vista);
   }, [vista]);
@@ -65,7 +69,7 @@ export default function App() {
     cargarDatosIniciales();
   }, [haySesion]);
 
-  // ACÁ ESTÁ EL ARREGLO:
+
   const recargarProductos = () => {
     setCargandoProductos(true);
 
@@ -90,6 +94,12 @@ export default function App() {
       setProductos([]);
       setCargandoProductos(false);
     }
+  };
+
+  const recargarMediosDePago = () => {
+    api.getMediosDePago()
+      .then(setMediosDePago)
+      .catch(err => console.error("Error recargando medios de pago:", err));
   };
 
   // Ahora le avisamos al sistema que recargue si cambiamos de categoría O de vista (menú a admin)
@@ -218,6 +228,7 @@ export default function App() {
             productos={productos}
             onProductosCambiaron={recargarProductos}
             onCategoriasCambiaron={recargarCategorias}
+            onMediosPagoCambiaron={recargarMediosDePago}
           />
         ) : categoriaSeleccionada === null ? (
           <div className="selector-categorias">
