@@ -42,9 +42,15 @@ export const api = {
   crearCategoria: (payload) => request('/api/categorias', { method: 'POST', body: JSON.stringify(payload) }),
   actualizarCategoria: (id, payload) => request(`/api/categorias/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   eliminarCategoria: (id) => request(`/api/categorias/${id}`, { method: 'DELETE' }),
-  // pedidos (requiere estar logueado)
+  
+ // pedidos (requiere estar logueado)
   realizarPedido: (payload) => request('/api/pedidos', { method: 'POST', body: JSON.stringify(payload) }),
   getMisPedidos: () => request('/api/pedidos/mios'),
+
+  // administracion de pedidos (admin)
+  getTodosLosPedidos: (estado = '') => request(estado ? `/api/pedidos?estado=${estado}` : '/api/pedidos'),
+  cambiarEstadoPedido: (id, estado) => request(`/api/pedidos/${id}/estado`, { method: 'PATCH', body: JSON.stringify({ estado }) }),
+  eliminarPedido: (id) => request(`/api/pedidos/${id}`, { method: 'DELETE' }),
 
  // medios de pago (admin)
   crearMedioPago: (payload) => request('/api/mediosDePago', { method: 'POST', body: JSON.stringify(payload) }),

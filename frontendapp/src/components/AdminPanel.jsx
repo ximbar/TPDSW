@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { api } from '../api/client.js'
 import { CategoriasAdmin } from './CategoriasAdmin.jsx'
 import { AdminMediosPago } from './AdminMediosPago.jsx'
+import { AdminPedidos } from './AdminPedidos.jsx'
 export default function AdminPanel({ categorias, productos, onProductosCambiaron, onCategoriasCambiaron, onMediosPagoCambiaron }) {
   const [tabActiva, setTabActiva] = useState(() => {
     return localStorage.getItem('admin_tab_activa') || 'productos';
@@ -151,7 +152,26 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
         >
           Gestión de Medios de Pago
         </button>
+
+        <button
+          type="button"
+          onClick={() => setTabActiva('pedidos')}
+          style={{
+            padding: '0.6rem 1.2rem',
+            background: tabActiva === 'pedidos' ? '#2f4f2f' : '#e5e7eb',
+            color: tabActiva === 'pedidos' ? '#ffffff' : '#1f2937',
+            border: 'none',
+            borderRadius: '6px',
+            fontWeight: '600',
+            cursor: 'pointer'
+          }}
+        >
+          Gestión de Pedidos
+        </button>
+
+
       </div>
+
 
       {/* LÓGICA DE RENDERIZADO */}
       {tabActiva === 'categorias' && (
@@ -162,6 +182,11 @@ export default function AdminPanel({ categorias, productos, onProductosCambiaron
         <AdminMediosPago onMedioPagosCambiaron={onMediosPagoCambiaron} />
       )}
       
+      {tabActiva === 'pedidos' && (
+        <AdminPedidos />
+      )}
+
+
       {tabActiva === 'productos' && (
         <>
       <div className="barra-superior-admin">

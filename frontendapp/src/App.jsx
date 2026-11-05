@@ -13,6 +13,7 @@ import CartDrawer from "./components/CartDrawer.jsx";
 import AuthScreen from "./components/AuthScreen.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
 import { AdminMediosPago } from "./components/AdminMediosPago.jsx";
+import MisPedidos from "./components/MisPedidos.jsx";
 
 export default function App() {
   const [usuario, setUsuario] = useState(getUsuarioGuardado());
@@ -230,6 +231,8 @@ export default function App() {
             onCategoriasCambiaron={recargarCategorias}
             onMediosPagoCambiaron={recargarMediosDePago}
           />
+        ) : vista === "misPedidos" ? (
+          <MisPedidos />
         ) : categoriaSeleccionada === null ? (
           <div className="selector-categorias">
             <h2
