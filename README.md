@@ -17,9 +17,10 @@ Este proyecto nace con el objetivo de evitar las largas filas y la saturación d
 
 ### Modelo
 
-<img width="1912" height="933" alt="image" src="https://github.com/user-attachments/assets/194bff58-87d3-4b1c-a12a-d3d2782e073c" />
+<img width="1003" height="924" alt="image" src="https://github.com/user-attachments/assets/54d115bf-576d-4b77-a503-fad4e98352d0" />
 
-*Link con la imagen*: https://drive.google.com/file/d/1OBiu_aYYQtGYvflXqaoManRGZXkH2aMC/view?usp=drive_link
+
+*Link con la imagen*: [https://drive.google.com/file/d/1OBiu_aYYQtGYvflXqaoManRGZXkH2aMC/view?usp=drive_link](https://github.com/user-attachments/assets/54d115bf-576d-4b77-a503-fad4e98352d0)
 
 ## Alcance Funcional 
 
