@@ -19,6 +19,9 @@ export class Producto {
   @Property({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   precio!: number
 
+  @Property({ type: 'text', nullable: true }) // <--- AGREGADO: mapea la columna imagen
+  imagen?: string
+
   @ManyToOne(() => Categoria, { nullable: false })
   categoria!: Rel<Categoria>
 

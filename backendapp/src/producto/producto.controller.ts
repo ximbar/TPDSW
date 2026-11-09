@@ -57,16 +57,21 @@ export async function update(req: Request, res: Response) {
     const id = Number.parseInt(req.params.id)
     const producto = await em.findOneOrFail(Producto, { id })
 
-    if (req.body.categoria) {
-      req.body.categoria = await em.findOneOrFail(Categoria, { id: req.body.categoria })
-    }
-    if (req.body.carta) {
-      req.body.carta = await em.findOneOrFail(Carta, { id: req.body.carta })
-    }
+    if (req.body.nombre !== undefined) producto.nombre = req.body.nombre;
+    if (req.body.descripcion !== undefined) producto.descripcion = req.body.descripcion;
+    if (req.body.precio !== undefined) producto.precio = req.body.precio;
     if (req.body.stock !== undefined && req.body.stock !== '') {
-      req.body.stock = Number(req.body.stock);
+      producto.stock = Number(req.body.stock);
     }
-    em.assign(producto, req.body)
+    // Asignación explícita de la imagen
+    if (req.body.imagen !== undefined) {
+      producto.imagen = req.body.imagen;
+    }
+    if (req.body.categoria) {
+      const catId = typeof req.body.categoria === 'object' ? req.body.categoria.id : req.body.categoria;
+      producto.categoria = await em.findOneOrFail(Categoria, { id: Number(catId) });
+    }
+
     await em.flush()
     res.status(200).json({ message: 'producto actualizado', data: producto })
   } catch (error: any) {
