@@ -8,8 +8,8 @@ import { Producto } from '../producto/producto.entity.js'
 
 const em = orm.em
 
-// GET /api/pedidos  -> lista todos
-// GET /api/pedidos?estado=PENDIENTE -> lista filtrada por estado (pedido del enunciado)
+// GET /api/pedidos -> lista todos
+// GET /api/pedidos?estado=PENDIENTE -> lista filtrada por estado
 export async function findAll(req: Request, res: Response) {
   try {
     const filtro = req.query.estado ? { estado: req.query.estado as EstadoPedido } : {}
@@ -54,25 +54,10 @@ export async function findMisPedidos(req: Request, res: Response) {
 
 /**
  * CASO DE USO: Realizar pedido (carrito take away)
- *
- * Requiere estar logueado (ver middleware verifyToken en las rutas).
- * El usuario del pedido se toma del TOKEN, no del body: así nadie puede
- * hacer un pedido a nombre de otra persona mandando un id distinto.
- *
- * Body esperado:
- * {
- *   "medioDePago": 1,
- *   "items": [
- *     { "producto": 1, "cantidad": 2 },
- *     { "producto": 3, "cantidad": 1 }
- *   ]
- * }
- *
- * No confiamos en el precio que mande el cliente: lo buscamos nosotros en la
- * base para cada producto, así evitamos que alguien lo manipule desde el front.
+ * Respeta el precio con descuento enviado desde las cartas/promos.
  */
 export async function realizarPedido(req: Request, res: Response) {
-  const usuarioId = req.usuario!.id // viene del token (verifyToken ya lo validó)
+  const usuarioId = req.usuario!.id
   const { medioDePago, items } = req.body
 
   if (!Array.isArray(items) || items.length === 0) {
@@ -80,8 +65,6 @@ export async function realizarPedido(req: Request, res: Response) {
   }
 
   try {
-    // em.transactional agrupa todo en una transacción:
-    // si algo falla a mitad de camino, se revierte TODO (no queda un pedido a medias)
     const pedidoCreado = await em.transactional(async (tem) => {
       const usuarioEntity = await tem.findOneOrFail(Usuario, { id: usuarioId })
       const medioDePagoEntity = await tem.findOneOrFail(MedioDePago, { id: medioDePago })
@@ -91,7 +74,7 @@ export async function realizarPedido(req: Request, res: Response) {
         medioDePago: medioDePagoEntity,
         estado: EstadoPedido.PENDIENTE,
         fecha: new Date(),
-        total: 0, // se recalcula abajo
+        total: 0,
       })
 
       let total = 0
@@ -104,14 +87,20 @@ export async function realizarPedido(req: Request, res: Response) {
           throw new Error(`cantidad invalida para el producto ${producto.id}`)
         }
 
-        const subtotal = Number(producto.precio) * cantidad
+        // Si viene con descuento desde la promo, se toma ese precio rebajado
+        const precioUnitario =
+          item.precioUnitario !== undefined && Number(item.precioUnitario) > 0
+            ? Number(item.precioUnitario)
+            : Number(producto.precio)
+
+        const subtotal = precioUnitario * cantidad
         total += subtotal
 
         tem.create(DetallePedido, {
           pedido,
           producto,
           cantidad,
-          precioUnitario: producto.precio, // precio "congelado" al momento del pedido
+          precioUnitario,
         })
       }
 
@@ -120,7 +109,6 @@ export async function realizarPedido(req: Request, res: Response) {
       return pedido
     })
 
-    // recargamos el pedido ya creado con sus relaciones para devolverlo completo
     const pedidoCompleto = await em.findOneOrFail(
       Pedido,
       { id: pedidoCreado.id },
@@ -135,7 +123,6 @@ export async function realizarPedido(req: Request, res: Response) {
 
 /**
  * CASO DE USO: Cambiar estado de pedido
- * PATCH /api/pedidos/:id/estado   body: { "estado": "EN_PREPARACION" }
  */
 export async function cambiarEstado(req: Request, res: Response) {
   try {

@@ -34,19 +34,24 @@ export const api = {
   // administracion de productos (requiere admin, el token ya va solo)
   crearProducto: (payload) => request('/api/productos', { method: 'POST', body: JSON.stringify(payload) }),
   eliminarProducto: (id) => request(`/api/productos/${id}`, { method: 'DELETE' }),
-  
-  // Función para editar un producto existente
   actualizarProducto: (id, payload) => request(`/api/productos/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   
   // administracion de categorias (requiere admin, el token ya va solo)
   crearCategoria: (payload) => request('/api/categorias', { method: 'POST', body: JSON.stringify(payload) }),
   actualizarCategoria: (id, payload) => request(`/api/categorias/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   eliminarCategoria: (id) => request(`/api/categorias/${id}`, { method: 'DELETE' }),
-  // pedidos (requiere estar logueado)
+
+  // pedidos
   realizarPedido: (payload) => request('/api/pedidos', { method: 'POST', body: JSON.stringify(payload) }),
   getMisPedidos: () => request('/api/pedidos/mios'),
+  getPedidos: () => request('/api/pedidos'),
+  cambiarEstadoPedido: (id, estado) =>
+    request(`/api/pedidos/${id}/estado`, {
+      method: 'PATCH',
+      body: JSON.stringify({ estado }),
+    }),
 
- // medios de pago (admin)
+  // medios de pago (admin)
   crearMedioPago: (payload) => request('/api/mediosDePago', { method: 'POST', body: JSON.stringify(payload) }),
   actualizarMedioPago: (id, payload) => request(`/api/mediosDePago/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   eliminarMedioPago: (id) => request(`/api/mediosDePago/${id}`, { method: 'DELETE' }),
